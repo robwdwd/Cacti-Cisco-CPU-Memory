@@ -35,11 +35,11 @@ function ss_cisco_memory($hostname, $host_id, $snmp_auth, $cmd, $arg1 = '', $arg
 
     $host_args = array();
 
-    $host_args['version'] = $snmp[0];
-    $host_args['port']    = $snmp[1];
-    $host_args['timeout'] = $snmp[2];
-    $host_args['ping_retries'] = $snmp[3];
-    $host_args['max_oids']     = $snmp[4];
+    $host_args['version']         = $snmp[0];
+    $host_args['port']            = $snmp[1];
+    $host_args['timeout']         = $snmp[2];
+    $host_args['ping_retries']    = $snmp[3];
+    $host_args['max_oids']        = $snmp[4];
 
     $host_args['auth_username']   = '';
     $host_args['auth_password']   = '';
@@ -57,18 +57,17 @@ function ss_cisco_memory($hostname, $host_id, $snmp_auth, $cmd, $arg1 = '', $arg
         $host_args['priv_protocol']   = $snmp[10];
         $host_args['context']         = $snmp[11];
     } else {
-        $host_args['community'] = $snmp[5];
+        $host_args['community']       = $snmp[5];
     }
 
     $host_args['oids'] = array(
-             "cempMemPoolName"   => ".1.3.6.1.4.1.9.9.221.1.1.1.1.3",
              "entPhysicalName"   => ".1.3.6.1.2.1.47.1.1.1.1.7",
-             "cempMemPoolHCUsed" => ".1.3.6.1.4.1.9.9.221.1.1.1.1.18",
-             "cempMemPoolHCFree" => ".1.3.6.1.4.1.9.9.221.1.1.1.1.20"
+             "cempMemPoolName"   => ".1.3.6.1.4.1.9.9.221.1.1.1.1.3",
+             "cempMemPoolHCFree" => ".1.3.6.1.4.1.9.9.221.1.1.1.1.20",
+             "cempMemPoolHCUsed" => ".1.3.6.1.4.1.9.9.221.1.1.1.1.18"
             );
 
     if (($cmd == 'index')) {
-
         $arr_index = ss_cisco_memory_reindex(cacti_snmp_walk(
             $hostname,
             $host_args['community'],
@@ -112,34 +111,15 @@ function ss_cisco_memory($hostname, $host_id, $snmp_auth, $cmd, $arg1 = '', $arg
     } elseif ($cmd == 'query') {
         switch ($arg1) {
             case "memoryDesc":
-                $arr = ss_cisco_memory_get_desc( $hostname, $host_args );
+                $arr = ss_cisco_memory_get_desc($hostname, $host_args);
                 break;
 
             case "cempMemPoolHCUsed":
-                $arr = ss_cisco_memory_reindex(cacti_snmp_walk(
-                    $hostname,
-                    $host_args['community'],
-                    $host_args['oids']['cempMemPoolHCUsed'],
-                    $host_args['version'],
-                    $host_args['auth_username'],
-                    $host_args['auth_password'],
-                    $host_args['auth_protocol'],
-                    $host_args['priv_passphrase'],
-                    $host_args['priv_protocol'],
-                    $host_args['context'],
-                    $host_args['port'],
-                    $host_args['timeout'],
-                    $host_args['ping_retries'],
-                    $host_args['max_oids'],
-                    SNMP_POLLER
-                ));
-                break;
-
             case "cempMemPoolHCFree":
                 $arr = ss_cisco_memory_reindex(cacti_snmp_walk(
                     $hostname,
                     $host_args['community'],
-                    $host_args['oids']['cempMemPoolHCFree'],
+                    $host_args['oids'][$arg1],
                     $host_args['version'],
                     $host_args['auth_username'],
                     $host_args['auth_password'],
@@ -164,7 +144,7 @@ function ss_cisco_memory($hostname, $host_id, $snmp_auth, $cmd, $arg1 = '', $arg
 
         switch ($arg1) {
             case "memoryDesc":
-                $arr = ss_cisco_memory_get_desc( $hostname, $host_args );
+                $arr = ss_cisco_memory_get_desc($hostname, $host_args);
 
                 if (isset($arr[$index])) {
                     return $arr[$index];
@@ -179,7 +159,7 @@ function ss_cisco_memory($hostname, $host_id, $snmp_auth, $cmd, $arg1 = '', $arg
                 $value = cacti_snmp_get(
                     $hostname,
                     $host_args['community'],
-                    $oids[$arg1].'.'.$index;
+                    $oids[$arg1].'.'.$index,
                     $host_args['version'],
                     $host_args['auth_username'],
                     $host_args['auth_password'],
@@ -205,12 +185,8 @@ function ss_cisco_memory($hostname, $host_id, $snmp_auth, $cmd, $arg1 = '', $arg
     }
 }
 
-
-// "cempMemPoolName" => ".1.3.6.1.4.1.9.9.221.1.1.1.1.3",
-// "entPhysicalName" => ".1.3.6.1.2.1.47.1.1.1.1.7",
-// "cempMemPoolHCUsed" => ".1.3.6.1.4.1.9.9.221.1.1.1.1.18",
-// "cempMemPoolHCFree" => ".1.3.6.1.4.1.9.9.221.1.1.1.1.20"
-function ss_cisco_memory_get_desc($hostname, $host_args) {
+function ss_cisco_memory_get_desc($hostname, $host_args)
+{
 
     $name_arr = ss_cisco_memory_reindex(cacti_snmp_walk(
         $hostname,
