@@ -116,7 +116,7 @@ function ss_cisco_cpu_usage($hostname, $host_id, $snmp_auth, $cmd, $arg1 = '', $
 
             case "cpmCPUTotal1minRev":
             case "cpmCPUTotal5minRev":
-                $arr = ss_cisco_memory_reindex(cacti_snmp_walk(
+                $arr = ss_cisco_cpu_reindex(cacti_snmp_walk(
                     $hostname,
                     $host_args['community'],
                     $host_args['oids'][$arg1],
