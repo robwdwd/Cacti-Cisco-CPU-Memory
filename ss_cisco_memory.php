@@ -49,7 +49,7 @@ function ss_cisco_memory($hostname, $host_id, $snmp_auth, $cmd, $arg1 = '', $arg
     $host_args['context']         = '';
     $host_args['community']       = '';
 
-    if ($snmp_version == 3) {
+    if ($host_args['version'] === '3') {
         $host_args['auth_username']   = $snmp[6];
         $host_args['auth_password']   = $snmp[7];
         $host_args['auth_protocol']   = $snmp[8];
@@ -159,7 +159,7 @@ function ss_cisco_memory($hostname, $host_id, $snmp_auth, $cmd, $arg1 = '', $arg
                 $value = cacti_snmp_get(
                     $hostname,
                     $host_args['community'],
-                    $oids[$arg1].'.'.$index,
+                    $host_args['oids'][$arg1].'.'.$index,
                     $host_args['version'],
                     $host_args['auth_username'],
                     $host_args['auth_password'],
