@@ -32,135 +32,127 @@ function ss_cisco_memory($hostname, $host_id, $snmp_auth, $cmd, $arg1 = '', $arg
     // |host_snmp_password|:|host_snmp_auth_protocol|:|host_snmp_priv_passphrase|:
     // |host_snmp_priv_protocol|:|host_snmp_context|
     $snmp         = explode(':', $snmp_auth);
-    $snmp_version = $snmp[0];
-    $snmp_port    = $snmp[1];
-    $snmp_timeout = $snmp[2];
-    $ping_retries = $snmp[3];
-    $max_oids     = $snmp[4];
 
-    $snmp_auth_username   = '';
-    $snmp_auth_password   = '';
-    $snmp_auth_protocol   = '';
-    $snmp_priv_passphrase = '';
-    $snmp_priv_protocol   = '';
-    $snmp_context         = '';
-    $snmp_community       = '';
+    $host_args = array();
+
+    $host_args['version'] = $snmp[0];
+    $host_args['port']    = $snmp[1];
+    $host_args['timeout'] = $snmp[2];
+    $host_args['ping_retries'] = $snmp[3];
+    $host_args['max_oids']     = $snmp[4];
+
+    $host_args['auth_username']   = '';
+    $host_args['auth_password']   = '';
+    $host_args['auth_protocol']   = '';
+    $host_args['priv_passphrase'] = '';
+    $host_args['priv_protocol']   = '';
+    $host_args['context']         = '';
+    $host_args['community']       = '';
 
     if ($snmp_version == 3) {
-        $snmp_auth_username   = $snmp[6];
-        $snmp_auth_password   = $snmp[7];
-        $snmp_auth_protocol   = $snmp[8];
-        $snmp_priv_passphrase = $snmp[9];
-        $snmp_priv_protocol   = $snmp[10];
-        $snmp_context         = $snmp[11];
+        $host_args['auth_username']   = $snmp[6];
+        $host_args['auth_password']   = $snmp[7];
+        $host_args['auth_protocol']   = $snmp[8];
+        $host_args['priv_passphrase'] = $snmp[9];
+        $host_args['priv_protocol']   = $snmp[10];
+        $host_args['context']         = $snmp[11];
     } else {
-        $snmp_community = $snmp[5];
+        $host_args['community'] = $snmp[5];
     }
 
-    $oids = array(
+    $host_args['oids'] = array(
              "cempMemPoolName"   => ".1.3.6.1.4.1.9.9.221.1.1.1.1.3",
              "entPhysicalName"   => ".1.3.6.1.2.1.47.1.1.1.1.7",
              "cempMemPoolHCUsed" => ".1.3.6.1.4.1.9.9.221.1.1.1.1.18",
-             "cempMemPoolHCFree" => ".1.3.6.1.4.1.9.9.221.1.1.1.1.20",
+             "cempMemPoolHCFree" => ".1.3.6.1.4.1.9.9.221.1.1.1.1.20"
             );
 
     if (($cmd == 'index')) {
-        $arr_index = ss_cisco_memory_get_indexes(
+
+        $arr_index = ss_cisco_memory_reindex(cacti_snmp_walk(
             $hostname,
-            $snmp_community,
-            $oids['cempMemPoolName'],
-            $snmp_version,
-            $snmp_auth_username,
-            $snmp_auth_password,
-            $snmp_auth_protocol,
-            $snmp_priv_passphrase,
-            $snmp_priv_protocol,
-            $snmp_context,
-            $snmp_port,
-            $snmp_timeout,
-            $ping_retries,
-            $max_oids
-        );
+            $host_args['community'],
+            $host_args['oids']['cempMemPoolName'],
+            $host_args['version'],
+            $host_args['auth_username'],
+            $host_args['auth_password'],
+            $host_args['auth_protocol'],
+            $host_args['priv_passphrase'],
+            $host_args['priv_protocol'],
+            $host_args['context'],
+            $host_args['port'],
+            $host_args['timeout'],
+            $host_args['ping_retries'],
+            $host_args['max_oids'],
+            SNMP_POLLER
+        ));
 
         foreach ($arr_index as $index => $value) {
             print $index."\n";
         }
     } elseif (($cmd == 'num_indexes')) {
-        $arr_index = ss_cisco_memory_get_indexes(
+        $arr_index = ss_cisco_memory_reindex(cacti_snmp_walk(
             $hostname,
-            $snmp_community,
-            $oids['cempMemPoolName'],
-            $snmp_version,
-            $snmp_auth_username,
-            $snmp_auth_password,
-            $snmp_auth_protocol,
-            $snmp_priv_passphrase,
-            $snmp_priv_protocol,
-            $snmp_context,
-            $snmp_port,
-            $snmp_timeout,
-            $ping_retries,
-            $max_oids
-        );
+            $host_args['community'],
+            $host_args['oids']['cempMemPoolName'],
+            $host_args['version'],
+            $host_args['auth_username'],
+            $host_args['auth_password'],
+            $host_args['auth_protocol'],
+            $host_args['priv_passphrase'],
+            $host_args['priv_protocol'],
+            $host_args['context'],
+            $host_args['port'],
+            $host_args['timeout'],
+            $host_args['ping_retries'],
+            $host_args['max_oids'],
+            SNMP_POLLER
+        ));
         return sizeof($arr_index);
     } elseif ($cmd == 'query') {
         switch ($arg1) {
             case "memoryDesc":
-                $arr = ss_cisco_memory_get_desc(
-                    $hostname,
-                    $snmp_community,
-                    $oids['cempMemPoolName'],
-                    $oids['entPhysicalName'],
-                    $snmp_version,
-                    $snmp_auth_username,
-                    $snmp_auth_password,
-                    $snmp_auth_protocol,
-                    $snmp_priv_passphrase,
-                    $snmp_priv_protocol,
-                    $snmp_context,
-                    $snmp_port,
-                    $snmp_timeout,
-                    $ping_retries,
-                    $max_oids
-                );
+                $arr = ss_cisco_memory_get_desc( $hostname, $host_args );
                 break;
 
             case "cempMemPoolHCUsed":
-                $arr = ss_cisco_memory_get_usage(
+                $arr = ss_cisco_memory_reindex(cacti_snmp_walk(
                     $hostname,
-                    $snmp_community,
-                    $oids['cempMemPoolHCUsed'],
-                    $snmp_version,
-                    $snmp_auth_username,
-                    $snmp_auth_password,
-                    $snmp_auth_protocol,
-                    $snmp_priv_passphrase,
-                    $snmp_priv_protocol,
-                    $snmp_context,
-                    $snmp_port,
-                    $snmp_timeout,
-                    $ping_retries,
-                    $max_oids
-                );
+                    $host_args['community'],
+                    $host_args['oids']['cempMemPoolHCUsed'],
+                    $host_args['version'],
+                    $host_args['auth_username'],
+                    $host_args['auth_password'],
+                    $host_args['auth_protocol'],
+                    $host_args['priv_passphrase'],
+                    $host_args['priv_protocol'],
+                    $host_args['context'],
+                    $host_args['port'],
+                    $host_args['timeout'],
+                    $host_args['ping_retries'],
+                    $host_args['max_oids'],
+                    SNMP_POLLER
+                ));
                 break;
 
             case "cempMemPoolHCFree":
-                $arr = ss_cisco_memory_get_usage(
+                $arr = ss_cisco_memory_reindex(cacti_snmp_walk(
                     $hostname,
-                    $snmp_community,
-                    $oids['cempMemPoolHCFree'],
-                    $snmp_version,
-                    $snmp_auth_username,
-                    $snmp_auth_password,
-                    $snmp_auth_protocol,
-                    $snmp_priv_passphrase,
-                    $snmp_priv_protocol,
-                    $snmp_context,
-                    $snmp_port,
-                    $snmp_timeout,
-                    $ping_retries,
-                    $max_oids
-                );
+                    $host_args['community'],
+                    $host_args['oids']['cempMemPoolHCFree'],
+                    $host_args['version'],
+                    $host_args['auth_username'],
+                    $host_args['auth_password'],
+                    $host_args['auth_protocol'],
+                    $host_args['priv_passphrase'],
+                    $host_args['priv_protocol'],
+                    $host_args['context'],
+                    $host_args['port'],
+                    $host_args['timeout'],
+                    $host_args['ping_retries'],
+                    $host_args['max_oids'],
+                    SNMP_POLLER
+                ));
                 break;
         }
 
@@ -169,28 +161,10 @@ function ss_cisco_memory($hostname, $host_id, $snmp_auth, $cmd, $arg1 = '', $arg
         }
     } elseif ($cmd == 'get') {
         $index = rtrim($arg2);
-        $want_oid = null;
 
         switch ($arg1) {
             case "memoryDesc":
-                $arr = ss_cisco_memory_get_desc(
-                    $hostname,
-                    $snmp_community,
-                    $oids['cempMemPoolName'],
-                    $oids['entPhysicalName'],
-                    $snmp_version,
-                    $snmp_auth_username,
-                    $snmp_auth_password,
-                    $snmp_auth_protocol,
-                    $snmp_priv_passphrase,
-                    $snmp_priv_protocol,
-                    $snmp_context,
-                    $snmp_port,
-                    $snmp_timeout,
-                    $ping_retries,
-                    $max_oids
-                );
-
+                $arr = ss_cisco_memory_get_desc( $hostname, $host_args );
 
                 if (isset($arr[$index])) {
                     return $arr[$index];
@@ -201,42 +175,33 @@ function ss_cisco_memory($hostname, $host_id, $snmp_auth, $cmd, $arg1 = '', $arg
                 break;
 
             case "cempMemPoolHCUsed":
-                $want_oid = $oids['cempMemPoolHCUsed'].'.'.$arg2;
-                break;
-
             case "cempMemPoolHCFree":
-                $want_oid = $oids['cempMemPoolHCFree'].'.'.$arg2;
+                $value = cacti_snmp_get(
+                    $hostname,
+                    $host_args['community'],
+                    $oids[$arg1].'.'.$index;
+                    $host_args['version'],
+                    $host_args['auth_username'],
+                    $host_args['auth_password'],
+                    $host_args['auth_protocol'],
+                    $host_args['priv_passphrase'],
+                    $host_args['priv_protocol'],
+                    $host_args['context'],
+                    $host_args['port'],
+                    $host_args['timeout'],
+                    $host_args['ping_retries'],
+                    $host_args['max_oids'],
+                    SNMP_POLLER
+                );
+                if (!is_numeric($value)) {
+                    cacti_log('ERROR: Invalid Return Value in ss_cisco_memory.php for get ('.$arg1.') '.$index.' and host_id '.$host_id, false);
+                }
+                return $value;
                 break;
         }
 
-        if (!isset($want_oid)) {
-            cacti_log('ERROR: Unable to determine OID in ss_cisco_memory.php for get ('.$arg1.') '.$index.' and host_id '.$host_id, false);
-            return 'U';
-        }
-
-        $value = cacti_snmp_get(
-            $hostname,
-            $snmp_community,
-            $want_oid,
-            $snmp_version,
-            $snmp_auth_username,
-            $snmp_auth_password,
-            $snmp_auth_protocol,
-            $snmp_priv_passphrase,
-            $snmp_priv_protocol,
-            $snmp_context,
-            $snmp_port,
-            $snmp_timeout,
-            $ping_retries,
-            $max_oids,
-            SNMP_POLLER
-        );
-
-        if (!is_numeric($value)) {
-            cacti_log('ERROR: Invalid Return Value in ss_cisco_memory.php for get ('.$arg1.') '.$index.' and host_id '.$host_id, false);
-        }
-
-        return $value;
+        cacti_log('ERROR: Unable to determine get type in ss_cisco_memory.php for get ('.$arg1.') '.$index.' and host_id '.$host_id, false);
+        return 'U';
     }
 }
 
@@ -245,142 +210,52 @@ function ss_cisco_memory($hostname, $host_id, $snmp_auth, $cmd, $arg1 = '', $arg
 // "entPhysicalName" => ".1.3.6.1.2.1.47.1.1.1.1.7",
 // "cempMemPoolHCUsed" => ".1.3.6.1.4.1.9.9.221.1.1.1.1.18",
 // "cempMemPoolHCFree" => ".1.3.6.1.4.1.9.9.221.1.1.1.1.20"
-function ss_cisco_memory_get_desc(
-    $hostname,
-    $snmp_community,
-    $indexoid,
-    $descoid,
-    $snmp_version,
-    $snmp_auth_username,
-    $snmp_auth_password,
-    $snmp_auth_protocol,
-    $snmp_priv_passphrase,
-    $snmp_priv_protocol,
-    $snmp_context,
-    $snmp_port,
-    $snmp_timeout,
-    $ping_retries,
-    $max_oids
-) {
+function ss_cisco_memory_get_desc($hostname, $host_args) {
 
-    $index_arr = ss_cisco_memory_reindex(cacti_snmp_walk(
+    $name_arr = ss_cisco_memory_reindex(cacti_snmp_walk(
         $hostname,
-        $snmp_community,
-        $indexoid,
-        $snmp_version,
-        $snmp_auth_username,
-        $snmp_auth_password,
-        $snmp_auth_protocol,
-        $snmp_priv_passphrase,
-        $snmp_priv_protocol,
-        $snmp_context,
-        $snmp_port,
-        $snmp_timeout,
-        $ping_retries,
-        $max_oids,
+        $host_args['community'],
+        $host_args['oids']['cempMemPoolName'],
+        $host_args['version'],
+        $host_args['auth_username'],
+        $host_args['auth_password'],
+        $host_args['auth_protocol'],
+        $host_args['priv_passphrase'],
+        $host_args['priv_protocol'],
+        $host_args['context'],
+        $host_args['port'],
+        $host_args['timeout'],
+        $host_args['ping_retries'],
+        $host_args['max_oids'],
         SNMP_POLLER
     ));
-    $hw_arr    = ss_cisco_hw_reindex(cacti_snmp_walk(
+
+    $hw_arr = ss_cisco_hw_reindex(cacti_snmp_walk(
         $hostname,
-        $snmp_community,
-        $descoid,
-        $snmp_version,
-        $snmp_auth_username,
-        $snmp_auth_password,
-        $snmp_auth_protocol,
-        $snmp_priv_passphrase,
-        $snmp_priv_protocol,
-        $snmp_context,
-        $snmp_port,
-        $snmp_timeout,
-        $ping_retries,
-        $max_oids,
+        $host_args['community'],
+        $host_args['oids']['entPhysicalName'],
+        $host_args['version'],
+        $host_args['auth_username'],
+        $host_args['auth_password'],
+        $host_args['auth_protocol'],
+        $host_args['priv_passphrase'],
+        $host_args['priv_protocol'],
+        $host_args['context'],
+        $host_args['port'],
+        $host_args['timeout'],
+        $host_args['ping_retries'],
+        $host_args['max_oids'],
         SNMP_POLLER
     ));
 
     $return_arr = array();
 
-    foreach ($index_arr as $index => $pool) {
+    foreach ($name_arr as $index => $pool) {
         $hw_index           = strstr($index, '.', true);
         $return_arr[$index] = $hw_arr[$hw_index].' - '.$pool;
     }
 
     return $return_arr;
-}
-
-function ss_cisco_memory_get_usage(
-    $hostname,
-    $snmp_community,
-    $oid,
-    $snmp_version,
-    $snmp_auth_username,
-    $snmp_auth_password,
-    $snmp_auth_protocol,
-    $snmp_priv_passphrase,
-    $snmp_priv_protocol,
-    $snmp_context,
-    $snmp_port,
-    $snmp_timeout,
-    $ping_retries,
-    $max_oids
-) {
-
-    return ss_cisco_memory_reindex(
-        cacti_snmp_walk(
-            $hostname,
-            $snmp_community,
-            $oid,
-            $snmp_version,
-            $snmp_auth_username,
-            $snmp_auth_password,
-            $snmp_auth_protocol,
-            $snmp_priv_passphrase,
-            $snmp_priv_protocol,
-            $snmp_context,
-            $snmp_port,
-            $snmp_timeout,
-            $ping_retries,
-            $max_oids,
-            SNMP_POLLER
-        )
-    );
-}
-
-function ss_cisco_memory_get_indexes(
-    $hostname,
-    $snmp_community,
-    $oid,
-    $snmp_version,
-    $snmp_auth_username,
-    $snmp_auth_password,
-    $snmp_auth_protocol,
-    $snmp_priv_passphrase,
-    $snmp_priv_protocol,
-    $snmp_context,
-    $snmp_port,
-    $snmp_timeout,
-    $ping_retries,
-    $max_oids
-) {
-
-    $arr = ss_cisco_memory_reindex(cacti_snmp_walk(
-        $hostname,
-        $snmp_community,
-        $oid,
-        $snmp_version,
-        $snmp_auth_username,
-        $snmp_auth_password,
-        $snmp_auth_protocol,
-        $snmp_priv_passphrase,
-        $snmp_priv_protocol,
-        $snmp_context,
-        $snmp_port,
-        $snmp_timeout,
-        $ping_retries,
-        $max_oids,
-        SNMP_POLLER
-    ));
-    return $arr;
 }
 
 function ss_cisco_memory_reindex($arr)
