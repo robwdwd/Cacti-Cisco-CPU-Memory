@@ -32,18 +32,18 @@ function ss_cisco_cpu_usage($hostname, $host_id, $snmp_auth, $cmd, $arg1 = '', $
 # |host_snmp_priv_protocol|:|host_snmp_context|
 
     $snmp = explode(':', $snmp_auth);
-    $snmp_version     = $snmp[0];
-    $snmp_port        = $snmp[1];
-    $snmp_timeout     = $snmp[2];
-    $ping_retries     = $snmp[3];
-    $max_oids        = $snmp[4];
+    $snmp_version   = $snmp[0];
+    $snmp_port      = $snmp[1];
+    $snmp_timeout   = $snmp[2];
+    $ping_retries   = $snmp[3];
+    $max_oids       = $snmp[4];
 
-    $snmp_auth_username       = '';
-    $snmp_auth_password       = '';
-    $snmp_auth_protocol      = '';
-    $snmp_priv_passphrase     = '';
-    $snmp_priv_protocol       = '';
-    $snmp_context             = '';
+    $snmp_auth_username     = '';
+    $snmp_auth_password     = '';
+    $snmp_auth_protocol     = '';
+    $snmp_priv_passphrase   = '';
+    $snmp_priv_protocol     = '';
+    $snmp_context           = '';
     $snmp_community         = '';
 
     if ($snmp_version == 3) {
@@ -129,7 +129,7 @@ function ss_cisco_cpu_usage($hostname, $host_id, $snmp_auth, $cmd, $arg1 = '', $
                 $arr = ss_cisco_cpu_get_usage($hostname, $snmp_community, $oids['cpu5min'], $snmp_version, $snmp_auth_username, $snmp_auth_password, $snmp_auth_protocol, $snmp_priv_passphrase, $snmp_priv_protocol, $snmp_context, $snmp_port, $snmp_timeout, $ping_retries, $max_oids);
                 break;
         }
-
+    
         $index = rtrim($arg2);
 
         if (isset($arr[$index])) {
@@ -146,58 +146,10 @@ function ss_cisco_cpu_usage($hostname, $host_id, $snmp_auth, $cmd, $arg1 = '', $
 // "cpu1min" => ".1.3.6.1.4.1.9.9.109.1.1.1.1.7",
 // "cpu5min" => ".1.3.6.1.4.1.9.9.109.1.1.1.1.8"
 
-function ss_cisco_cpu_get_desc(
-    $hostname,
-    $snmp_community,
-    $indexoid,
-    $descoid,
-    $snmp_version,
-    $snmp_auth_username,
-    $snmp_auth_password,
-    $snmp_auth_protocol,
-    $snmp_priv_passphrase,
-    $snmp_priv_protocol,
-    $snmp_context,
-    $snmp_port,
-    $snmp_timeout,
-    $ping_retries,
-    $max_oids
-) {
-    $index_arr = ss_cisco_cpu_reindex(cacti_snmp_walk(
-        $hostname,
-        $snmp_community,
-        $indexoid,
-        $snmp_version,
-        $snmp_auth_username,
-        $snmp_auth_password,
-        $snmp_auth_protocol,
-        $snmp_priv_passphrase,
-        $snmp_priv_protocol,
-        $snmp_context,
-        $snmp_port,
-        $snmp_timeout,
-        $ping_retries,
-        $max_oids,
-        SNMP_POLLER
-    ));
-
-    $hw_arr = ss_cisco_cpu_reindex(cacti_snmp_walk(
-        $hostname,
-        $snmp_community,
-        $descoid,
-        $snmp_version,
-        $snmp_auth_username,
-        $snmp_auth_password,
-        $snmp_auth_protocol,
-        $snmp_priv_passphrase,
-        $snmp_priv_protocol,
-        $snmp_context,
-        $snmp_port,
-        $snmp_timeout,
-        $ping_retries,
-        $max_oids,
-        SNMP_POLLER
-    ));
+function ss_cisco_cpu_get_desc($hostname, $snmp_community, $indexoid, $descoid, $snmp_version, $snmp_auth_username, $snmp_auth_password, $snmp_auth_protocol, $snmp_priv_passphrase, $snmp_priv_protocol, $snmp_context, $snmp_port, $snmp_timeout, $ping_retries, $max_oids)
+{
+    $index_arr = ss_cisco_cpu_reindex(cacti_snmp_walk($hostname, $snmp_community, $indexoid, $snmp_version, $snmp_auth_username, $snmp_auth_password, $snmp_auth_protocol, $snmp_priv_passphrase, $snmp_priv_protocol, $snmp_context, $snmp_port, $snmp_timeout, $ping_retries, $max_oids, SNMP_POLLER));
+    $hw_arr = ss_cisco_cpu_reindex(cacti_snmp_walk($hostname, $snmp_community, $descoid, $snmp_version, $snmp_auth_username, $snmp_auth_password, $snmp_auth_protocol, $snmp_priv_passphrase, $snmp_priv_protocol, $snmp_context, $snmp_port, $snmp_timeout, $ping_retries, $max_oids, SNMP_POLLER));
 
     $return_arr = array();
 
@@ -214,75 +166,15 @@ function ss_cisco_cpu_get_desc(
     return $return_arr;
 }
 
-function ss_cisco_cpu_get_usage(
-    $hostname,
-    $snmp_community,
-    $oid,
-    $snmp_version,
-    $snmp_auth_username,
-    $snmp_auth_password,
-    $snmp_auth_protocol,
-    $snmp_priv_passphrase,
-    $snmp_priv_protocol,
-    $snmp_context,
-    $snmp_port,
-    $snmp_timeout,
-    $ping_retries,
-    $max_oids
-) {
-    return ss_cisco_cpu_reindex(cacti_snmp_walk(
-        $hostname,
-        $snmp_community,
-        $oid,
-        $snmp_version,
-        $snmp_auth_username,
-        $snmp_auth_password,
-        $snmp_auth_protocol,
-        $snmp_priv_passphrase,
-        $snmp_priv_protocol,
-        $snmp_context,
-        $snmp_port,
-        $snmp_timeout,
-        $ping_retries,
-        $max_oids,
-        SNMP_POLLER
-    ));
+function ss_cisco_cpu_get_usage($hostname, $snmp_community, $oid, $snmp_version, $snmp_auth_username, $snmp_auth_password, $snmp_auth_protocol, $snmp_priv_passphrase, $snmp_priv_protocol, $snmp_context, $snmp_port, $snmp_timeout, $ping_retries, $max_oids)
+{
+    return ss_cisco_cpu_reindex(cacti_snmp_walk($hostname, $snmp_community, $oid, $snmp_version, $snmp_auth_username, $snmp_auth_password, $snmp_auth_protocol, $snmp_priv_passphrase, $snmp_priv_protocol, $snmp_context, $snmp_port, $snmp_timeout, $ping_retries, $max_oids, SNMP_POLLER));
 }
 
-function ss_cisco_cpu_get_indexes(
-    $hostname,
-    $snmp_community,
-    $oid,
-    $snmp_version,
-    $snmp_auth_username,
-    $snmp_auth_password,
-    $snmp_auth_protocol,
-    $snmp_priv_passphrase,
-    $snmp_priv_protocol,
-    $snmp_context,
-    $snmp_port,
-    $snmp_timeout,
-    $ping_retries,
-    $max_oids
-) {
-
-    return ss_cisco_cpu_reindex(cacti_snmp_walk(
-        $hostname,
-        $snmp_community,
-        $oid,
-        $snmp_version,
-        $snmp_auth_username,
-        $snmp_auth_password,
-        $snmp_auth_protocol,
-        $snmp_priv_passphrase,
-        $snmp_priv_protocol,
-        $snmp_context,
-        $snmp_port,
-        $snmp_timeout,
-        $ping_retries,
-        $max_oids,
-        SNMP_POLLER
-    ));
+function ss_cisco_cpu_get_indexes($hostname, $snmp_community, $oid, $snmp_version, $snmp_auth_username, $snmp_auth_password, $snmp_auth_protocol, $snmp_priv_passphrase, $snmp_priv_protocol, $snmp_context, $snmp_port, $snmp_timeout, $ping_retries, $max_oids)
+{
+    $arr = ss_cisco_cpu_reindex(cacti_snmp_walk($hostname, $snmp_community, $oid, $snmp_version, $snmp_auth_username, $snmp_auth_password, $snmp_auth_protocol, $snmp_priv_passphrase, $snmp_priv_protocol, $snmp_context, $snmp_port, $snmp_timeout, $ping_retries, $max_oids, SNMP_POLLER));
+    return $arr;
 }
 
 function ss_cisco_cpu_reindex($arr)
