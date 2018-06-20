@@ -1,0 +1,34 @@
+<query>
+	<name>Cisco Device - Get Memory Utilisation</name>
+	<description>Queries a Cisco device for linecard/module Memory Utilisation</description>
+	<script_path>|path_cacti|/scripts/ss_cisco_memory.php</script_path>
+	<script_function>ss_cisco_memory</script_function>
+	<script_server>php</script_server>
+	<arg_prepend>|host_hostname| |host_id| |host_snmp_version|:|host_snmp_port|:|host_snmp_timeout|:|host_ping_retries|:|host_max_oids|:|host_snmp_community|:|host_snmp_username|:|host_snmp_password|:|host_snmp_auth_protocol|:|host_snmp_priv_passphrase|:|host_snmp_priv_protocol|:|host_snmp_context|</arg_prepend>
+	<arg_index>index</arg_index>
+	<arg_num_indexes>num_indexes</arg_num_indexes>
+	<arg_query>query</arg_query>
+	<arg_get>get</arg_get>
+	<output_delimeter>:</output_delimeter>
+	<index_order>memoryDesc</index_order>
+	<index_order_type>alphabetic</index_order_type>
+	<index_title_format>|chosen_order_field|</index_title_format>
+
+	<fields>
+		<memoryDesc>
+			<name>Memory Pool Description</name>
+			<direction>input</direction>
+			<query_name>memoryDesc</query_name>
+		</memoryDesc>
+		<cempMemPoolHCUsed>
+			<name>Memory Pool Used</name>
+			<direction>output</direction>
+			<query_name>cempMemPoolHCUsed</query_name>
+		</cempMemPoolHCUsed>
+		<cempMemPoolHCFree>
+			<name>Memory Pool Free</name>
+			<direction>output</direction>
+			<query_name>cempMemPoolHCFree</query_name>
+		</cempMemPoolHCFree>
+	</fields>
+</query>
