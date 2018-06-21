@@ -228,7 +228,12 @@ function ss_cisco_memory_get_desc($hostname, $host_args)
 
     foreach ($name_arr as $index => $pool) {
         $hw_index           = strstr($index, '.', true);
-        $return_arr[$index] = $hw_arr[$hw_index].' - '.$pool;
+        if (isset($hw_arr[$hw_index]) && !empty($hw_arr[$hw_index])) {
+          $cpu_description =  preg_replace('/Virtual processor/i', 'VP', $hw_arr[$hw_index]);
+        } else {
+          $cpu_description = "Unknown HW";
+        }
+        $return_arr[$index] = $cpu_description.' '.$pool;
     }
 
     return $return_arr;

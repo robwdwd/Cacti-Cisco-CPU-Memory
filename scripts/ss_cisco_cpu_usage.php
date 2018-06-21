@@ -229,10 +229,27 @@ function ss_cisco_cpu_get_desc($hostname, $host_args)
 
     $return_arr = array();
 
+    foreach ($name_arr as $index => $pool) {
+        $hw_index           = strstr($index, '.', true);
+        if (isset($hw_arr[$hw_index]) && !empty($hw_arr[$hw_index])) {
+          $cpu_description =  preg_replace('/Virtual processor/i', 'VP', $hw_arr[$hw_index]);
+        } else {
+          $cpu_description = "Unknown HW";
+        }
+        $return_arr[$index] = $cpu_description.' '.$pool;
+    }
+
+
     foreach ($hwidx_arr as $index => $hw_index) {
         if (is_numeric($index)) {
             if (isset($hw_arr[$hw_index])) {
-                $return_arr[$index] =  $hw_arr[$hw_index];
+                // NCS-55xx devices
+                //
+                $hardware_desc = preg_replace('/Virtual processor/i', 'VP', $hw_arr[$hw_index]);
+                if ($hardware_desc === null) {
+                  $hardware_desc = $hw_arr[$hw_index];
+                }
+                $return_arr[$index] = $hardware_desc;
             } else {
                 $return_arr[$index] = 'Unknown CPU ' . $hw_index;
             }
