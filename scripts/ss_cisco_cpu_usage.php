@@ -177,13 +177,13 @@ function ss_cisco_cpu_usage($hostname, $host_id, $snmp_auth, $cmd, $arg1 = '', $
                     SNMP_POLLER
                 );
                 if (!is_numeric($value)) {
-                    cacti_log('ERROR: Invalid Return Value in ss_cisco_memory.php for get ('.$arg1.') '.$index.' and host_id '.$host_id, false);
+                    cacti_log('ERROR: Invalid Return Value in ss_cisco_cpu_usage.php for get ('.$arg1.') '.$index.' and host_id '.$host_id, false);
                 }
                 return $value;
                 break;
         }
 
-        cacti_log('ERROR: Unable to determine get type in ss_cisco_memory.php for get ('.$arg1.') '.$index.' and host_id '.$host_id, false);
+        cacti_log('ERROR: Unable to determine get type in ss_cisco_cpu_usage.php for get ('.$arg1.') '.$index.' and host_id '.$host_id, false);
         return 'U';
     }
 }
