@@ -174,7 +174,7 @@ function ss_cisco_memory($hostname, $host_id, $snmp_auth, $cmd, $arg1 = '', $arg
                     SNMP_POLLER
                 );
                 if (!is_numeric($value)) {
-                    cacti_log('ERROR: Invalid Return Value in ss_cisco_memory.php for get ('.$arg1.') '.$index.' and host_id '.$host_id, false);
+                    cacti_log('ERROR: Invalid Return Value [' . $value .'] in ss_cisco_memory.php for get ('.$arg1.') '.$index.' and host_id '.$host_id, false);
                 }
                 return $value;
                 break;
