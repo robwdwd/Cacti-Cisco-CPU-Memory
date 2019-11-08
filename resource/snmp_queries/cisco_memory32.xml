@@ -1,0 +1,44 @@
+<interface>
+<name>Cisco Router - Memory pools</name>
+<description>Queries a Cisco router for available memory pools and stats</description>
+<oid_index>.1.3.6.1.4.1.9.9.48.1.1.1.2</oid_index>
+<index_order_type>numeric</index_order_type>
+<fields>
+	<poolName>
+		<name>Memory Pool</name>
+		<method>walk</method>
+		<source>value</source>
+		<direction>input</direction>
+		<oid>.1.3.6.1.4.1.9.9.48.1.1.1.2</oid>
+	</poolName>
+	<poolValid>
+		<name>Pool Valid?</name>
+		<method>walk</method>
+		<source>value</source>
+		<direction>input</direction>
+		<oid>.1.3.6.1.4.1.9.9.48.1.1.1.4</oid>
+	</poolValid>
+
+	<poolUsed>
+		<name>Memory Used</name>
+		<method>walk</method>
+		<source>value</source>
+		<direction>output</direction>
+		<oid>.1.3.6.1.4.1.9.9.48.1.1.1.5</oid>
+	</poolUsed>
+	<poolFree>
+		<name>Memory Free</name>
+		<method>walk</method>
+		<source>value</source>
+		<direction>output</direction>
+		<oid>.1.3.6.1.4.1.9.9.48.1.1.1.6</oid>
+	</poolFree>
+	<poolLargest>
+		<name>Largest Free Block</name>
+		<method>walk</method>
+		<source>value</source>
+		<direction>output</direction>
+		<oid>.1.3.6.1.4.1.9.9.48.1.1.1.7</oid>
+	</poolLargest>
+</fields>
+</interface>

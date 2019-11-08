@@ -4,13 +4,16 @@ Graphs for Cisco memory and CPU utilisation per line card for Cacti network moni
 
 ## Notes
 
-- Tested (so far) on Cacti version 1.1.38 but should work on all cacti 1.x releases. 
+- Tested (so far) on Cacti version 1.2.27 but should work on all cacti 1.x releases. 
 - Cacti 0.9x releases are not supported but with a bit of hacking may well work (namely includes at the top of the scripts.)
 - CPU and Memory graphs are separate graphs and templates. You can import both or just one as needed.
-- Memory graphs are based on CISCO-ENHANCED-MEMPOOL-MIB using 64bit counters (cempMemPoolHCFree and cempMemPoolHCUsed) for memory over 4GB. Newer cisco devices generally support this. For details: https://iphostmonitor.com/mib/CISCO-ENHANCED-MEMPOOL-MIB.html
+- 64-Bit Memory graphs are based on CISCO-ENHANCED-MEMPOOL-MIB using 64bit counters (cempMemPoolHCFree and cempMemPoolHCUsed) for memory over 4GB. Newer cisco devices generally support this. For details: https://iphostmonitor.com/mib/CISCO-ENHANCED-MEMPOOL-MIB.html
+- 32-Bit Memory graphs are supported on slightly older releases of Cisco hardware/software.
 
 ## Installation
 
 - Copy scripts/ss_cisco_* to your cacti scripts directory <cacti_install_path>/scripts/
+- Copy scripts/ss_cisco_* to your cacti scripts directory <cacti_install_path>/scripts/
+- Copy resource/script_server/cisco* to cacti resource directory <cacti_install_path>/resource/snmp_queries/
 - Copy resource/script_server/cisco* to cacti resource directory <cacti_install_path>/resource/script_server/
 - Import templates in the template directory using the Cacti Web UI.
